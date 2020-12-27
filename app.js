@@ -44,6 +44,9 @@ class App{
         this.workingVector = new THREE.Vector3();
         this.origin = new THREE.Vector3();
         
+        
+        this.loadingBar = new LoadingBar();
+        this.loadGLTF();
         this.initScene();
         this.setupVR();
         
@@ -67,10 +70,8 @@ class App{
 		grid.material.opacity = 0.2;
 		grid.material.transparent = true;
 		this.scene.add( grid );
-        
+
         this.colliders = [];
-        this.loadingBar = new LoadingBar();
-        this.loadGLTF();
     } 
     
     setupVR(){
@@ -90,7 +91,6 @@ class App{
             this.userData.selectPressed = false;
             
         }
-        
         this.controller0 = this.renderer.xr.getController( 0 );
         this.controller0.addEventListener( 'selectstart', onSelectStart );
         this.controller0.addEventListener( 'selectend', onSelectEnd );
@@ -108,37 +108,32 @@ class App{
             self.controllerGrip0 = null;
 
         } );
-        this.scene.add( this.controller0 );
 
         const controllerModelFactory = new XRControllerModelFactory();
 
         this.controllerGrip0 = this.renderer.xr.getControllerGrip( 0 );
         this.controllerGrip0.add( controllerModelFactory.createControllerModel( this.controllerGrip0 ) );
-        this.scene.add( this.controllerGrip0 );
         
         this.controller1 = this.renderer.xr.getController( 1 );
         this.controller1.addEventListener( 'selectstart', onSelectStart );
         this.controller1.addEventListener( 'selectend', onSelectEnd );
         this.controller1.addEventListener( 'connected', function ( event ) {
 
-            const mesh = self.buildController.call(self, event.data );
-            mesh.scale.z = 0;
-            this.add( mesh );
+            const mesh1 = self.buildController.call(self, event.data );
+            mesh1.scale.z = 0;
+            this.add( mesh1 );
 
         } );
         this.controller1.addEventListener( 'disconnected', function () {
 
-            this.remove( this.children[ 0 ] );
+            this.remove( this.children[ 1 ] );
             self.controller1 = null;
             self.controllerGrip1 = null;
 
         } );
-        this.scene.add( this.controller1 );
-
 
         this.controllerGrip1 = this.renderer.xr.getControllerGrip( 1 );
         this.controllerGrip1.add( controllerModelFactory.createControllerModel( this.controllerGrip1 ) );
-        this.scene.add( this.controllerGrip1 );
        
        
         this.dolly = new THREE.Object3D();
@@ -182,12 +177,12 @@ class App{
             
             const wallLimit = 1.3;
             const speed = 2;
-            let pos = this.dolly.position.clone();
+            let pos = this.camera.position.clone();
             pos.y += 1;
 
             let dir = new THREE.Vector3();
             //Store original dolly rotation
-            const quaternion = this.dolly.quaternion.clone();
+            const quaternion = this.camera.quaternion.clone();
             //Get rotation for movement from the headset pose
             this.dolly.quaternion.copy( this.dummyCam.getWorldQuaternion() );
             this.dolly.getWorldDirection(dir);
