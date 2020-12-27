@@ -14,7 +14,7 @@ class App{
         
         this.clock = new THREE.Clock();
         
-		this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 2000 );
+		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 200 );
 		this.camera.position.set( 0, 1.6, 5 );
         
 		this.scene = new THREE.Scene();
@@ -59,7 +59,7 @@ class App{
     initScene(){
 
 		this.scene.background = new THREE.Color( 0xa0a0a0 );
-		// this.scene.fog = new THREE.Fog( 0xa0a0a0, 50, 100 );
+		this.scene.fog = new THREE.Fog( 0xa0a0a0, 50, 100 );
 
 		// ground
 		const ground = new THREE.Mesh( new THREE.PlaneBufferGeometry( 200, 200 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
@@ -142,11 +142,12 @@ class App{
         this.controllerGrip1.add( controllerModelFactory.createControllerModel( this.controllerGrip1 ) );
         this.scene.add( this.controllerGrip1 );
        
-        this.camera.add( this.controller0, this.controllerGrip0, this.controller1, this.controllerGrip1 );
-
+       
         this.dolly = new THREE.Object3D();
         this.dolly.position.z = 5;
-        this.dolly.add( this.camera );
+        this.dolly.add( this.camera ); 
+        this.dolly.add( this.controller0, this.controllerGrip0, this.controller1, this.controllerGrip1 );
+
         this.scene.add( this.dolly ); 
         this.dummyCam = new THREE.Object3D();
         this.camera.add( this.dummyCam );
@@ -268,11 +269,11 @@ class App{
 				
 			},
 			// called when loading has errors
-			function ( error ) {
+			// function ( error ) {
 
-				console.log( 'An error happened' );
+			// 	console.log( 'An error happened' );
 
-			}  
+			// }  
         );
     }
 
@@ -285,7 +286,7 @@ class App{
 	render( ) {  
         const dt = this.clock.getDelta();
         this.stats.update();
-        if (this.controller ) this.handleController( this.controller, dt );
+        if (this.controller0 ) this.handleController( this.controller0, dt );
         this.renderer.render( this.scene, this.camera );
     }
 }
