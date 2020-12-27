@@ -1,11 +1,11 @@
-import * as THREE from '../../libs/three/three.module.js'
-import { OrbitControls } from '../../libs/OrbitControls.js'
-import { VRButton } from '../../libs/VRButton.js'
-import { XRControllerModelFactory } from '../../libs/XRControllerModelFactory.js'
-import { Stats } from '../../libs/stats.module.js';
-import { GLTFLoader } from '../../libs/GLTFLoader.js'
-import { LoadingBar } from '../../libs/LoadingBar.js';
-import { DRACOLoader } from '../../libs/DRACOLoader.js'
+import * as THREE from './libs/three/three.module.js'
+import { OrbitControls } from './libs/OrbitControls.js'
+import { VRButton } from './libs/VRButton.js'
+import { XRControllerModelFactory } from './libs/XRControllerModelFactory.js'
+import { Stats } from './libs/stats.module.js';
+import { GLTFLoader } from './libs/GLTFLoader.js'
+import { LoadingBar } from './libs/LoadingBar.js';
+import { DRACOLoader } from './libs/DRACOLoader.js'
 
 class App{
 	constructor(){
