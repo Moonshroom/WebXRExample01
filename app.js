@@ -52,9 +52,6 @@ class App{
         this.renderer.setAnimationLoop( this.render.bind(this) );
 	}	
     
-    random( min, max ){
-        return Math.random() * (max-min) + min;
-    }
     
     initScene(){
 
@@ -71,6 +68,7 @@ class App{
 		grid.material.transparent = true;
 		this.scene.add( grid );
         
+        this.colliders = [];
         this.loadingBar = new LoadingBar();
         this.loadGLTF();
     } 
@@ -252,14 +250,14 @@ class App{
 			function ( gltf ) {
                 const bbox = new THREE.Box3().setFromObject( gltf.scene );
                 console.log(`min:${bbox.min.x.toFixed(2)},${bbox.min.y.toFixed(2)},${bbox.min.z.toFixed(2)} -  max:${bbox.max.x.toFixed(2)},${bbox.max.y.toFixed(2)},${bbox.max.z.toFixed(2)}`);
-            
+                
                 self.mymesh = gltf.scene;
                 self.mymesh.position.set(62,8,-122)
                 
 				self.scene.add( gltf.scene );
                 
                 self.loadingBar.visible = false;
-				
+				self.colliders.push(self.mymesh)
 				self.renderer.setAnimationLoop( self.render.bind(self));
 			},
 			// called while loading is progressing
@@ -269,11 +267,11 @@ class App{
 				
 			},
 			// called when loading has errors
-			// function ( error ) {
+			function ( error ) {
 
-			// 	console.log( 'An error happened' );
+				console.log( 'An error happened' );
 
-			// }  
+			}  
         );
     }
 
