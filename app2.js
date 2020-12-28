@@ -69,11 +69,11 @@ class App{
 
 
         const boxGeo = new THREE.BoxBufferGeometry(40, 10, 40);      
-        const boxMat = new THREE.MeshBasicMaterial({ transparent: true });
+        const boxMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xffffff), side: THREE.FrontSide, transparent: true });
         this.roomBox = new THREE.Mesh(boxGeo, boxMat);
         this.roomBox.position.y = 4
         const edges = new THREE.EdgesGeometry( boxGeo );
-        const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000, linewidth: 10 } ) );
+        const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000,  linewidth: 5 } ) );
         const edge = line.clone();
         edge.position.copy( this.roomBox.position );
         this.scene.add(edge);

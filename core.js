@@ -65,15 +65,15 @@ class App{
     initScene(){
 
 		this.scene.background = new THREE.Color( 0xa0a0a0 );
-		// this.scene.fog = new THREE.Fog( 0xa0a0a0, 50, 100 );
+		this.scene.fog = new THREE.Fog( 0xa0a0a0, 50, 100 );
 
 
         const boxGeo = new THREE.BoxBufferGeometry(40, 10, 40);      
-        const boxMat = new THREE.MeshBasicMaterial({ transparent: true });
+        const boxMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xb0a8a7), side: THREE.DoubleSide});
         this.roomBox = new THREE.Mesh(boxGeo, boxMat);
         this.roomBox.position.y = 4
         const edges = new THREE.EdgesGeometry( boxGeo );
-        const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000, linewidth: 10 } ) );
+        const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000, linewidth: 5 } ) );
         const edge = line.clone();
         edge.position.copy( this.roomBox.position );
         this.scene.add(edge);
@@ -90,7 +90,7 @@ class App{
         this.scene.add( grid );
         
 
-        this.colliders = [this.roomBox];
+        this.colliders = [this.roomBox, this.edges];
     }
 
     setupVR(){
