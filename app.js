@@ -1,11 +1,14 @@
-import * as THREE from './libs/three/three.module.js'
-import { OrbitControls } from './libs/OrbitControls.js'
-import { VRButton } from './libs/VRButton.js'
-import { XRControllerModelFactory } from './libs/XRControllerModelFactory.js'
+import * as THREE from './libs/three/three.module.js';
+import { VRButton } from "./libs/VRButton.js";
+import { XRControllerModelFactory } from './libs/three/jsm/XRControllerModelFactory.js';
 import { Stats } from './libs/stats.module.js';
-import { GLTFLoader } from './libs/GLTFLoader.js'
+import { OrbitControls } from './libs/three/jsm/OrbitControls.js';
+
+import { GLTFLoader } from './libs/three/jsm/GLTFLoader.js';
+import { DRACOLoader } from './libs/three/jsm/DRACOLoader.js'
 import { LoadingBar } from './libs/LoadingBar.js';
-import { DRACOLoader } from './libs/DRACOLoader.js'
+
+
 
 class App{
 	constructor(){
@@ -44,9 +47,9 @@ class App{
         this.workingVector = new THREE.Vector3();
         this.origin = new THREE.Vector3();
         
-        
         this.loadingBar = new LoadingBar();
         this.loadGLTF();
+
         this.initScene();
         this.setupVR();
         
@@ -55,25 +58,41 @@ class App{
         this.renderer.setAnimationLoop( this.render.bind(this) );
 	}	
     
+    random( min, max ){
+        return Math.random() * (max-min) + min;
+    }
     
     initScene(){
 
 		this.scene.background = new THREE.Color( 0xa0a0a0 );
-		this.scene.fog = new THREE.Fog( 0xa0a0a0, 50, 100 );
+		// this.scene.fog = new THREE.Fog( 0xa0a0a0, 50, 100 );
+
+
+        const boxGeo = new THREE.BoxBufferGeometry(40, 10, 40);      
+        const boxMat = new THREE.MeshBasicMaterial({ transparent: true });
+        this.roomBox = new THREE.Mesh(boxGeo, boxMat);
+        this.roomBox.position.y = 4
+        const edges = new THREE.EdgesGeometry( boxGeo );
+        const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000, linewidth: 10 } ) );
+        const edge = line.clone();
+        edge.position.copy( this.roomBox.position );
+        this.scene.add(edge);
+        this.scene.add(this.roomBox) ;
 
 		// ground
-		const ground = new THREE.Mesh( new THREE.PlaneBufferGeometry( 200, 200 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+		const ground = new THREE.Mesh( new THREE.PlaneBufferGeometry( 40, 40 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
 		ground.rotation.x = - Math.PI / 2;
 		this.scene.add( ground );
 
-		var grid = new THREE.GridHelper( 200, 40, 0x000000, 0x000000 );
+		let grid = new THREE.GridHelper( 40, 10, 0x000000, 0x000000 );
 		grid.material.opacity = 0.2;
 		grid.material.transparent = true;
-		this.scene.add( grid );
+        this.scene.add( grid );
+        
 
-        this.colliders = [];
-    } 
-    
+        this.colliders = [this.roomBox];
+    }
+
     setupVR(){
         this.renderer.xr.enabled = true;
         
@@ -91,28 +110,29 @@ class App{
             this.userData.selectPressed = false;
             
         }
-        this.controller0 = this.renderer.xr.getController( 0 );
-        this.controller0.addEventListener( 'selectstart', onSelectStart );
-        this.controller0.addEventListener( 'selectend', onSelectEnd );
-        this.controller0.addEventListener( 'connected', function ( event ) {
+        
+        this.controller = this.renderer.xr.getController( 0 );
+        this.controller.addEventListener( 'selectstart', onSelectStart );
+        this.controller.addEventListener( 'selectend', onSelectEnd );
+        this.controller.addEventListener( 'connected', function ( event ) {
 
             const mesh = self.buildController.call(self, event.data );
             mesh.scale.z = 0;
             this.add( mesh );
 
         } );
-        this.controller0.addEventListener( 'disconnected', function () {
+        this.controller.addEventListener( 'disconnected', function () {
 
             this.remove( this.children[ 0 ] );
-            self.controller0 = null;
-            self.controllerGrip0 = null;
+            self.controller = null;
+            self.controllerGrip = null;
 
         } );
 
         const controllerModelFactory = new XRControllerModelFactory();
 
-        this.controllerGrip0 = this.renderer.xr.getControllerGrip( 0 );
-        this.controllerGrip0.add( controllerModelFactory.createControllerModel( this.controllerGrip0 ) );
+        this.controllerGrip = this.renderer.xr.getControllerGrip( 0 );
+        this.controllerGrip.add( controllerModelFactory.createControllerModel( this.controllerGrip ) );
         
         this.controller1 = this.renderer.xr.getController( 1 );
         this.controller1.addEventListener( 'selectstart', onSelectStart );
@@ -134,14 +154,13 @@ class App{
 
         this.controllerGrip1 = this.renderer.xr.getControllerGrip( 1 );
         this.controllerGrip1.add( controllerModelFactory.createControllerModel( this.controllerGrip1 ) );
-       
-       
+        this.scene.add( this.controllerGrip1 );
+
         this.dolly = new THREE.Object3D();
         this.dolly.position.z = 5;
-        this.dolly.add( this.camera ); 
-        this.dolly.add( this.controller0, this.controllerGrip0, this.controller1, this.controllerGrip1 );
-
-        this.scene.add( this.dolly ); 
+        this.dolly.add( this.camera, this.controller, this.controller1, this.controllerGrip, this.controllerGrip1 );
+        this.scene.add( this.dolly );
+        
         this.dummyCam = new THREE.Object3D();
         this.camera.add( this.dummyCam );
 
@@ -177,12 +196,12 @@ class App{
             
             const wallLimit = 1.3;
             const speed = 2;
-            let pos = this.camera.position.clone();
+            let pos = this.dolly.position.clone();
             pos.y += 1;
 
             let dir = new THREE.Vector3();
             //Store original dolly rotation
-            const quaternion = this.camera.quaternion.clone();
+            const quaternion = this.dolly.quaternion.clone();
             //Get rotation for movement from the headset pose
             this.dolly.quaternion.copy( this.dummyCam.getWorldQuaternion() );
             this.dolly.getWorldDirection(dir);
@@ -230,24 +249,24 @@ class App{
    
         }
     }
-    
+
     loadGLTF(){
         const loader = new GLTFLoader( ).setPath('./assets/');
         const self = this;
 		let dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('./libs/three/draco/');
+        dracoLoader.setDecoderPath('./libs/three/js/draco/');
         loader.setDRACOLoader(dracoLoader);
 		// Load a glTF resource
 		loader.load(
 			// resource URL
-			'poznan_stary_rynek.gltf',
+			'poznan_morasko.gltf',
 			// called when the resource is loaded
 			function ( gltf ) {
                 const bbox = new THREE.Box3().setFromObject( gltf.scene );
                 console.log(`min:${bbox.min.x.toFixed(2)},${bbox.min.y.toFixed(2)},${bbox.min.z.toFixed(2)} -  max:${bbox.max.x.toFixed(2)},${bbox.max.y.toFixed(2)},${bbox.max.z.toFixed(2)}`);
                 
                 self.mymesh = gltf.scene;
-                self.mymesh.position.set(62,8,-122)
+                self.mymesh.position.set(48,-68,-82)
                 
 				self.scene.add( gltf.scene );
                 
@@ -279,7 +298,7 @@ class App{
 	render( ) {  
         const dt = this.clock.getDelta();
         this.stats.update();
-        if (this.controller0 ) this.handleController( this.controller0, dt );
+        if (this.controller ) this.handleController( this.controller, dt );
         this.renderer.render( this.scene, this.camera );
     }
 }
