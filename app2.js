@@ -265,7 +265,7 @@ class App{
                 console.log(`min:${bbox.min.x.toFixed(2)},${bbox.min.y.toFixed(2)},${bbox.min.z.toFixed(2)} -  max:${bbox.max.x.toFixed(2)},${bbox.max.y.toFixed(2)},${bbox.max.z.toFixed(2)}`);
                 
                 self.mymesh = gltf.scene;
-                self.mymesh.position.set(42,-67.4,-79);
+                self.mymesh.position.set(42,-67.6,-79);
 				self.scene.add( gltf.scene );
                 
                 self.loadingBar.visible = false;
@@ -303,7 +303,7 @@ class App{
                 console.log(`min:${bbox.min.x.toFixed(2)},${bbox.min.y.toFixed(2)},${bbox.min.z.toFixed(2)} -  max:${bbox.max.x.toFixed(2)},${bbox.max.y.toFixed(2)},${bbox.max.z.toFixed(2)}`);
                 
                 self.mymesh = gltf.scene;
-                self.mymesh.position.set(5.5,-71.5,5);
+                self.mymesh.position.set(5.5,-71.7,5);
 				self.scene.add( gltf.scene );
                 
                 self.loadingBar.visible = false;
@@ -341,7 +341,7 @@ class App{
                 console.log(`min:${bbox.min.x.toFixed(2)},${bbox.min.y.toFixed(2)},${bbox.min.z.toFixed(2)} -  max:${bbox.max.x.toFixed(2)},${bbox.max.y.toFixed(2)},${bbox.max.z.toFixed(2)}`);
                 
                 self.mymesh = gltf.scene;
-                self.mymesh.position.set(3.5,-56,-23.5);
+                self.mymesh.position.set(3.5,-56.40,-23.5);
 				self.scene.add( gltf.scene );
                 
                 self.loadingBar.visible = false;
