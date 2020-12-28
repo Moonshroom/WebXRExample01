@@ -266,7 +266,7 @@ class App{
                 console.log(`min:${bbox.min.x.toFixed(2)},${bbox.min.y.toFixed(2)},${bbox.min.z.toFixed(2)} -  max:${bbox.max.x.toFixed(2)},${bbox.max.y.toFixed(2)},${bbox.max.z.toFixed(2)}`);
                 
                 self.mymesh = gltf.scene;
-                self.mymesh.position.set(48,-68,-82)
+                self.mymesh.position.set(48,-67.6,-82)
                 
 				self.scene.add( gltf.scene );
                 
