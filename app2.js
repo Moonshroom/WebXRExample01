@@ -336,14 +336,14 @@ class App{
 		// Load a glTF resource
 		loader.load(
 			// resource URL
-			'poznan_stary_rynek.gltf',
+			'poznan_rynek.gltf',
 			// called when the resource is loaded
 			function ( gltf ) {
                 const bbox = new THREE.Box3().setFromObject( gltf.scene );
                 console.log(`min:${bbox.min.x.toFixed(2)},${bbox.min.y.toFixed(2)},${bbox.min.z.toFixed(2)} -  max:${bbox.max.x.toFixed(2)},${bbox.max.y.toFixed(2)},${bbox.max.z.toFixed(2)}`);
                 
                 self.mymesh = gltf.scene;
-                self.mymesh.position.set(66.75,8,-119.25);
+                self.mymesh.position.set(5.5,-71.5,5);
 				self.scene.add( gltf.scene );
                 
                 self.loadingBar.visible = false;
