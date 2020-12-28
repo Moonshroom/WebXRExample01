@@ -45,10 +45,9 @@ class App{
         
         //loading models
         this.loadingBar = new LoadingBar();
-        this.loadKapo();
         this.loadMorasko();
-        this.loadStaryrynek()
-        this.loadStarybrowar()
+        this.loadStaryrynek();
+        this.loadStarybrowar();
 
         this.initScene();
         this.setupVR();
@@ -248,45 +247,6 @@ class App{
             this.dolly.quaternion.copy( quaternion );
    
         }
-    }
-
-    loadKapo(){
-        const loader = new GLTFLoader( ).setPath('./assets/');
-        const self = this;
-		let dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('./libs/three/js/draco/');
-        loader.setDRACOLoader(dracoLoader);
-		// Load a glTF resource
-		loader.load(
-			// resource URL
-			'poznan_kaponiera.gltf',
-			// called when the resource is loaded
-			function ( gltf ) {
-                const bbox = new THREE.Box3().setFromObject( gltf.scene );
-                console.log(`min:${bbox.min.x.toFixed(2)},${bbox.min.y.toFixed(2)},${bbox.min.z.toFixed(2)} -  max:${bbox.max.x.toFixed(2)},${bbox.max.y.toFixed(2)},${bbox.max.z.toFixed(2)}`);
-                
-                self.mymesh = gltf.scene;
-                self.mymesh.position.set(116.5,-48.65,25)
-                
-				self.scene.add( gltf.scene );
-                
-                self.loadingBar.visible = false;
-				self.colliders.push(self.mymesh)
-				self.renderer.setAnimationLoop( self.render.bind(self));
-			},
-			// called while loading is progressing
-			function ( xhr ) {
-
-				self.loadingBar.progress = (xhr.loaded / xhr.total);
-				
-			},
-			// called when loading has errors
-			function ( error ) {
-
-				console.log( 'An error happened' );
-
-			}  
-        );
     }
 
     loadMorasko(){
